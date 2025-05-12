@@ -1,0 +1,141 @@
+import dominiqueToretto.*
+
+describe "Tests de Dominique" {
+
+  test "Dominique compra Ferrari" {
+    dominique.comprarAuto(ferrari)
+    assert.equals(#{ferrari}, dominique.autos())
+  }
+
+  test "Dominique filtra los autos que no están en condiciones"{
+    dominique.comprarAuto(ferrari)
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    assert.equals(#{flechaRubi}, dominique.noEstanEnCondiciones())
+  }
+
+  test "Hace pruebas de velocidad y tiene 3 autos fuera de condiciones"{
+    dominique.comprarAuto(ferrari)
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    dominique.hacerPruebaDeVelocidad()
+    assert.equals(3, dominique.noEstanEnCondiciones().size())
+  }
+
+  test "Dominique compra Flecha Rubí e intocable y calcula promedio de velocidades máximas"{
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    assert.equals(127.5, dominique.promedioVelocidadesMaximas())
+  }
+
+  test "Dominique consulta velocidad máxima de autos en condiciones"{
+    dominique.comprarAuto(ferrari)
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    assert.equals(125, dominique.autoMasRapidoEnCondiciones().velocidadMaxima())
+  }
+
+  test "Dominique consulta velocidad máxima de todos los autos"{
+    dominique.comprarAuto(ferrari)
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    assert.equals(210, dominique.velocidadMaximaTodosLosAutos())
+  }
+
+  test "Dominique consulta velocidad máxima doble del promedio"{
+    dominique.comprarAuto(ferrari)
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    assert.notThat(dominique.velocidadMaximaMayorAlDobleDelPromedio())
+  }
+}
+
+describe "Test de taller"{
+
+  method initialize(){
+    dominique.comprarAuto(ferrari)
+    dominique.comprarAuto(flechaRubi)
+    dominique.comprarAuto(intocable)
+    dominique.hacerPruebaDeVelocidad()
+    dominique.enviarATaller()
+  }
+  test "El taller tiene 3 autos para reparar luego de pruebas de velocidad"{
+    assert.equals(3, taller.autosAReparar().size())
+  }
+
+  test "El taller repara todos los autos y no tiene más autos en cola"{
+    dominique.trabajarEnTaller()
+    assert.equals(#{}, taller.autosAReparar())
+  }
+
+}
+
+describe "Tests de Ferrari"{
+  test "Está en condiciones al inicio"{
+    assert.that(ferrari.estaEnCondiciones())
+  }
+
+  test "Al reparar tiene un motor al 100%"{
+    ferrari.reparar()
+    assert.equals(100, ferrari.funcionamientoMotor())
+  }
+
+  test "Velocidad Máxima al inicio"{
+    assert.equals(125, ferrari.velocidadMaxima())
+  }
+
+  test "Velocidad Máxima después de prueba"{
+    ferrari.pruebaDeVelocidad()
+    assert.equals(110, ferrari.velocidadMaxima())
+  }
+
+  test "Rendimiento de motor en 0 después de 3 pruebas desde condición inicial"{
+    ferrari.pruebaDeVelocidad()
+    ferrari.pruebaDeVelocidad()
+    ferrari.pruebaDeVelocidad()
+    assert.equals(0, ferrari.funcionamientoMotor())
+  }
+}
+
+describe "Tests de Flecha Rubi"{
+  test "No está en condiciones de correr al inicio"{
+    assert.notThat(flechaRubi.estaEnCondiciones())
+  }
+
+  test "Cambia a color rojo y está en condiciones de correr"{
+    flechaRubi.color(rojo)
+    assert.that(flechaRubi.estaEnCondiciones())
+  }
+
+  test "Reparación desde inicio la deja verde"{
+    flechaRubi.reparar()
+    assert.equals(verde, flechaRubi.color())
+  }
+
+  test "Reparación duplica el nivel de combustible"{
+    flechaRubi.reparar()
+    assert.equals(200, flechaRubi.nivelCombustible())
+  }
+
+  test "Velocidad máxima inicial con gasolina"{
+    assert.equals(210, flechaRubi.velocidadMaxima())
+  }
+
+  test "Velocidad máxima inicial con nafta"{
+    flechaRubi.tipoCombustible(nafta)
+    assert.equals(180, flechaRubi.velocidadMaxima())
+  }
+
+  test "Velocidad máxima inicial con nitrógeno líquido"{
+    flechaRubi.tipoCombustible(nitrogenoLiquido)
+    assert.equals(2000, flechaRubi.velocidadMaxima())
+  }
+}
+
+describe "Tests de Intocable"{
+  test "Intocable deja de estar en condiciones luego de prueba de velocidad"{
+    intocable.pruebaDeVelocidad()
+    assert.notThat(intocable.estaEnCondiciones())
+  }
+}
+
